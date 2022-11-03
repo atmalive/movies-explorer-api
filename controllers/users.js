@@ -5,6 +5,7 @@ const AuntificationError = require('../errors/AuntificationError');
 const { ERRORS } = require('../utils/errors');
 const NotFoundError = require('../errors/NotFoundError');
 const NotCorrectData = require('../errors/NotCorrectData');
+const {log} = require("winston");
 require('dotenv').config();
 
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -18,8 +19,18 @@ const signUp = (req, res, next) => {
         name: userData.name, email: userData.email,
       });
     })
-    .catch(next);
-};
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new NotCorrectData(ERRORS.IS_USER.USER_ERROR));
+      } else {
+        next(err);
+      }})}
+
+// if (err.name === 'CastError') {
+//   next(new NotCorrectData(ERRORS.VALIDATION.GENERAL));
+// } else {
+//   next(err);
+// }
 
 const signIn = (req, res, next) => {
   const { email, password } = req.body;
