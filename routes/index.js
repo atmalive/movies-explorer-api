@@ -28,7 +28,7 @@ routerMain.get('/crash-test', () => {
 
 routerMain.use(auth);
 
-routerMain.use('/cards', routerMovies);
+routerMain.use('/movies', routerMovies);
 routerMain.use('/users', routerUsers);
 
 routerMain.post('/signout', signOut);

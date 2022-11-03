@@ -20,7 +20,7 @@ const movieSchema = new mongoose.Schema({
   },
 
   year: {
-    type: Number,
+    type: String,
     required: true,
   },
 
@@ -57,10 +57,12 @@ const movieSchema = new mongoose.Schema({
   },
 
   owner: {
+    type: String,
     required: true,
   },
 
   movieId: {
+    type: String,
     required: true,
   },
 
@@ -76,4 +78,4 @@ const movieSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model('card', movieSchema);
+module.exports = mongoose.model('movies', movieSchema);
