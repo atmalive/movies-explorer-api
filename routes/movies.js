@@ -19,8 +19,6 @@ routerMovies.post('', celebrate({
     image: Joi.string().required().min(2).pattern(new RegExp(regex)),
     trailerLink: Joi.string().required().min(2).pattern(new RegExp(regex)),
     thumbnail: Joi.string().required().min(2).pattern(new RegExp(regex)),
-    owner: Joi.string().alphanum().required().hex()
-      .length(24),
     movieId: Joi.string().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
