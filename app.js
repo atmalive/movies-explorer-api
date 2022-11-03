@@ -14,7 +14,7 @@ const { mongoPath } = require('./utils/config');
 const { apiLimiter } = require('./utils/rateLimit');
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://mestoatmalive.nomoredomains.icu', 'https://mestoatmalive.nomoredomains.icu'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://front.atmalivefilms.nomoredomains.icu', 'https://front.atmalivefilms.nomoredomains.icu'],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
@@ -22,7 +22,7 @@ const corsOptions = {
   credentials: true,
 };
 
-// Слушаем 3000 порт
+
 const { PORT = 3001 } = process.env;
 
 const app = express();
