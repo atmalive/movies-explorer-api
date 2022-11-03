@@ -4,11 +4,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const { ERRORS } = require('./utils/errors');
 const { handleErrors } = require('./middlewares/errors');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { routerMain } = require('./routes');
+const { mongoPath } = require('./utils/config');
+const { apiLimiter } = require('./utils/rateLimit');
 
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://localhost:3001', 'http://mestoatmalive.nomoredomains.icu', 'https://mestoatmalive.nomoredomains.icu'],
@@ -24,17 +27,17 @@ const { PORT = 3001 } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(mongoPath, {
   useNewUrlParser: true,
 });
-
+app.use(helmet());
 app.use('*', cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
-
+app.use(apiLimiter);
 app.use('', routerMain);
 
 app.use('*', () => {

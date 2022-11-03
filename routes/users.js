@@ -2,22 +2,16 @@ const routerUsers = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { getUser, updateUser } = require('../controllers/users');
 
-// signUp
-// signIn
+routerUsers.get('/:me', getUser);
 
-//
-// getUser
-// updateUser
-// signOut
-
-routerUsers.get('/users/me', getUser);
-
-routerUsers.patch('/users/me', celebrate({
+routerUsers.patch('/:me', celebrate({
   body: Joi.object().keys({
     name: Joi.string()
       .required().min(2).max(30),
-    about: Joi.string()
-      .required().min(2).max(30),
+    email: Joi.string()
+      .required().min(5).max(50),
+    password: Joi.string()
+      .required().min(2).max(128),
   }),
 }), updateUser);
 

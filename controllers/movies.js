@@ -5,7 +5,7 @@ const NoRight = require('../errors/NoRight');
 const NotCorrectData = require('../errors/NotCorrectData');
 
 const getSavedMovies = (req, res, next) => {
-  Movie.find({ owner: req.params.owner })
+  Movie.find({ owner: req.user._id })
     .then((movies) => {
       res.send(movies);
     })

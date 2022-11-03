@@ -43,7 +43,7 @@ const signIn = (req, res, next) => {
 };
 
 const getUser = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findById(req.user._id)
     .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER))
     .then((user) => res.send(user))
     .catch((err) => {
@@ -56,17 +56,18 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email, password } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(
-    userId,
-    { name, about },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
-    .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER))
+  bcrypt.hash(password, 10)
+    .then((hash) => User.findByIdAndUpdate(
+      userId,
+      { name, email, password: hash },
+      {
+        new: true,
+        runValidators: true,
+      },
+    )
+      .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER)))
     .then((user) => {
       res.send(user);
     })
