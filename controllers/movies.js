@@ -3,6 +3,7 @@ const { ERRORS } = require('../utils/errors');
 const NotFoundError = require('../errors/NotFoundError');
 const NoRight = require('../errors/NoRight');
 const NotCorrectData = require('../errors/NotCorrectData');
+const { castError, filmDelete, validationError } = require('../utils/consts');
 
 const getSavedMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
@@ -45,7 +46,7 @@ const saveMovie = (req, res, next) => {
       res.send(movie);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === validationError) {
         next(new NotCorrectData(ERRORS.VALIDATION.GENERAL));
       } else {
         next(err);
@@ -61,11 +62,11 @@ const deleteMovie = (req, res, next) => {
         throw new NoRight(ERRORS.NO_RIGHT.USER_ERROR);
       }
       Movie.deleteOne(movie)
-        .then(() => res.send({ message: 'фильм удален' }))
+        .then(() => res.send({ message: filmDelete }))
         .catch(next);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === castError) {
         next(new NotCorrectData(ERRORS.VALIDATION.GENERAL));
       } else {
         next(err);

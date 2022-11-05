@@ -5,9 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-const { ERRORS } = require('./utils/errors');
 const { handleErrors } = require('./middlewares/errors');
-const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { routerMain } = require('./routes');
 const { mongoPath } = require('./utils/config');
@@ -22,11 +20,11 @@ const corsOptions = {
   credentials: true,
 };
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, MONGO_PATH, NODE_ENV } = process.env;
 
 const app = express();
 
-mongoose.connect(mongoPath, {
+mongoose.connect(NODE_ENV === 'production' ? MONGO_PATH : mongoPath, {
   useNewUrlParser: true,
 });
 app.use(helmet());
@@ -39,9 +37,6 @@ app.use(requestLogger);
 app.use(apiLimiter);
 app.use('', routerMain);
 
-app.use('*', () => {
-  throw new NotFoundError(ERRORS.NOT_FOUND.BAD_WAY);
-});
 app.use(errorLogger);
 
 app.use(errors());

@@ -5,6 +5,10 @@ const AuntificationError = require('../errors/AuntificationError');
 const { ERRORS } = require('../utils/errors');
 const NotFoundError = require('../errors/NotFoundError');
 const NotCorrectData = require('../errors/NotCorrectData');
+const IsUser = require('../errors/IsUser');
+const {
+  validationError, tokenName, allRight, castError, youAreOut, production, devSecret,
+} = require('../utils/consts');
 require('dotenv').config();
 
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -20,7 +24,7 @@ const signUp = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new NotCorrectData(ERRORS.IS_USER.USER_ERROR));
+        next(new IsUser(ERRORS.IS_USER.USER_ERROR));
       } else {
         next(err);
       }
@@ -38,11 +42,11 @@ const signIn = (req, res, next) => {
         }
         const token = jwt.sign(
           { _id: user._id },
-          NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+          NODE_ENV === production ? JWT_SECRET : devSecret,
           { expiresIn: '7d' },
         );
-        res.cookie('token', token, { httpOnly: true, sameSite: true });
-        res.send({ message: 'Все верно!' });
+        res.cookie(tokenName, token, { httpOnly: true, sameSite: true });
+        res.send({ message: allRight });
       })
       .catch(next))
     .catch(next);
@@ -53,7 +57,7 @@ const getUser = (req, res, next) => {
     .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === castError) {
         next(new NotCorrectData(ERRORS.VALIDATION.GENERAL));
       } else {
         next(err);
@@ -62,24 +66,25 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email } = req.body;
   const userId = req.user._id;
-  bcrypt.hash(password, 10)
-    .then((hash) => User.findByIdAndUpdate(
-      userId,
-      { name, email, password: hash },
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
-      .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER)))
+  User.findByIdAndUpdate(
+    userId,
+    { $set: { name, email } },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .orFail(new NotFoundError(ERRORS.NOT_FOUND.USER))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === validationError) {
         next(new NotCorrectData(ERRORS.VALIDATION.GENERAL));
+      } else if (err.code === 11000) {
+        next(new IsUser(ERRORS.IS_USER.USER_ERROR));
       } else {
         next(err);
       }
@@ -87,8 +92,8 @@ const updateUser = (req, res, next) => {
 };
 
 const signOut = (req, res) => {
-  res.clearCookie('token');
-  res.send({ message: 'Вы вышли!' });
+  res.clearCookie(tokenName);
+  res.send({ message: youAreOut });
 };
 
 module.exports = {

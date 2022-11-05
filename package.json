@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/atmalive/movies-explorer-api#readme",
   "dependencies": {
-    "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "celebrate": "^15.0.1",
@@ -40,8 +39,6 @@
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "node-hot-loader": "^1.21.9",
-    "nodemon": "^2.0.20",
-    "webpack": "^5.74.0"
+    "nodemon": "^2.0.20"
   }
 }

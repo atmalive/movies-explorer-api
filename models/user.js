@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
-// const { regex } = require('../utils/regex');
+const { mailIsNotRequired } = require('../utils/consts');
 
 const userSchema = new mongoose.Schema({
 
   name: {
     type: String,
+    required: true,
     minlength: 2,
     maxlength: 30,
   },
@@ -16,7 +17,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v),
-      message: 'неправильный формат почты',
+      message: mailIsNotRequired,
     },
   },
 

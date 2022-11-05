@@ -1,5 +1,4 @@
 const rateLimit = require('express-rate-limit');
-const app = require('bcrypt/promises');
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -7,8 +6,5 @@ const apiLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-
-// Apply the rate limiting middleware to API calls only
-app.use('/api', apiLimiter);
 
 module.exports = { apiLimiter };

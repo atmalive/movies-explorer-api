@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const isUrl = require('validator/lib/isURL');
-// const { regex } = require('../utils/regex')
+const { onlyLink } = require('../utils/consts');
 
 const movieSchema = new mongoose.Schema({
 
@@ -34,7 +34,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => isUrl(v, { protocols: ['http', 'https', 'ftp'], require_tld: true, require_protocol: true }),
-      message: 'можно только линк',
+      message: onlyLink,
     },
   },
 
@@ -43,7 +43,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => isUrl(v, { protocols: ['http', 'https', 'ftp'], require_tld: true, require_protocol: true }),
-      message: 'можно только линк',
+      message: onlyLink,
     },
   },
 
@@ -52,17 +52,18 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => isUrl(v, { protocols: ['http', 'https', 'ftp'], require_tld: true, require_protocol: true }),
-      message: 'можно только линк',
+      message: onlyLink,
     },
   },
 
   owner: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
     required: true,
   },
 
   movieId: {
-    type: String,
+    type: Number,
     required: true,
   },
 
